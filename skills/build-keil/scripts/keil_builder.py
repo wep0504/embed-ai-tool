@@ -24,12 +24,27 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-if sys.stdout.encoding and sys.stdout.encoding.lower().replace("-", "") != "utf8":
+if sys.stdout and hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+elif sys.stdout:
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+if sys.stderr and hasattr(sys.stderr, "reconfigure"):
+    try:
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+elif sys.stderr:
     sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
-_REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
-sys.path.insert(0, str(_REPO_ROOT / "shared"))
+_SCRIPT_DIR = Path(__file__).resolve().parent
+_SKILLS_DIR = _SCRIPT_DIR.parent.parent
+for _candidate in [_SKILLS_DIR / "shared", _SKILLS_DIR.parent / "shared"]:
+    if (_candidate / "tool_config.py").exists():
+        sys.path.insert(0, str(_candidate))
+        break
 from tool_config import get_tool_path, set_tool_path
 
 try:
