@@ -1,6 +1,6 @@
 ---
 name: build-cmake
-description: 当需要配置或构建基于 CMake 的嵌入式固件工程，并识别构建产物时使用。
+description: 当需要配置或构建基于 CMake 的嵌入式固件工程，调用自带脚本执行构建并定位固件产物时使用。
 ---
 
 # 构建 CMake 工程
@@ -10,29 +10,29 @@ description: 当需要配置或构建基于 CMake 的嵌入式固件工程，并
 - `Project Profile` 中标明 `build_system: cmake`。
 - 用户希望对 CMake MCU 工程执行配置、重编译或确认固件产物。
 - 烧录或调试流程需要新的 `ELF`、`HEX` 或 `BIN`。
+- 需要在构建前确认环境是否就绪（cmake、生成器、工具链）。
 
 ## 必要输入
 
 - 工作区路径，或一份已有的 `Project Profile`。
-- 可选的构建预设、构建目录、目标名、生成器和构建类型。
+- 可选的构建预设、构建目录、目标名、生成器、构建类型和工具链文件。
 
 ## 自动探测
 
-- 若存在 `CMakePresets.json`，优先使用。
+- 若存在 `CMakePresets.json`，优先使用脚本的 `--list-presets` 列出并选择预设。
 - 否则检查 `CMakeLists.txt`、已有构建目录和工具链文件。
 - 若已有成功的构建目录且与当前意图一致，优先复用。
-- 生成器优先级为 `Ninja`，其次是宿主机上已安装的原生 Makefile 工具。
+- 生成器由脚本自动探测，优先 `Ninja`，其次是宿主机上已安装的 Make 工具。
 - 对调试导向请求默认使用 `Debug`，否则默认使用 `RelWithDebInfo`。
 
 ## 执行步骤
 
-1. 若已有 `Project Profile`，优先复用，并确认工程支持 `cmake`。
-2. 选择配置方式：若存在匹配预设则使用 `cmake --preset <name>`，否则使用 `cmake -S <src> -B <build_dir>`。
-3. 根据可用性和宿主兼容性选择生成器，所有平台均优先 `Ninja`。
-4. 当需要工具链文件且预设中未隐含该信息时，显式传入工具链文件。
-5. 构建指定目标；若未指定，则构建当前预设或目录下的默认固件目标。
-6. 在构建输出中搜索 `ELF`、`HEX`、`BIN`，并记录所有候选产物。
-7. 按 `ELF > HEX > BIN` 提升首选产物，并更新 `Project Profile`。
+1. 先阅读 [references/usage.md](references/usage.md)，确认本次是环境探测、列出预设、执行构建，还是仅扫描产物。
+2. 若不确定环境是否就绪，先运行自带脚本 [scripts/cmake_builder.py](scripts/cmake_builder.py) 的 `--detect` 模式确认。
+3. 若存在 CMakePresets.json，使用 `--list-presets` 列出预设，再用 `--preset <name>` 构建。
+4. 若无预设，使用 `--source`、`--build-dir`、`--generator`、`--build-type`、`--toolchain` 手动配置构建。
+5. 读取脚本输出的构建结果和产物扫描报告，重点关注首选产物（ELF > HEX > BIN）和失败分类。
+6. 将构建目录、产物路径、产物类型和生成器信息写回 `Project Profile`，并在需要时交给下游 skill。
 
 ## 失败分流
 
@@ -44,6 +44,7 @@ description: 当需要配置或构建基于 CMake 的嵌入式固件工程，并
 ## 平台说明
 
 - 在 Windows 上，除非工作区明确要求特定 Visual Studio shell，否则优先 `Ninja`，避免依赖特定开发者命令环境。
+- 自带脚本使用 Python 标准库和 subprocess 调用 cmake，因此构建调度路径本身是跨平台的。
 - 输出中的构建目录应保持为绝对路径，方便下游烧录和调试 skill 直接复用。
 
 ## 输出约定
