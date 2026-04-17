@@ -27,6 +27,7 @@ REQUIRED_SKILLS = [
     "flash-openocd",
     "serial-monitor",
     "debug-gdb-openocd",
+    "peripheral-driver",
 ]
 
 REQUIRED_SECTIONS = [
