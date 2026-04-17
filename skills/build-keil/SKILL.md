@@ -53,13 +53,33 @@ description: 当需要通过 Keil MDK 命令行编译嵌入式工程，调用自
 
 ## 输出约定
 
-- 输出编译命令、工程文件、目标名、芯片型号、工具链和首选产物路径。
-- 输出错误和警告统计，以及关键编译日志证据。
+脚本执行完成后，必须将以下关键信息提取并呈现给用户：
+
+- 编译状态（成功/失败）
+- 工程文件和目标名
+- 芯片型号和工具链（如 STM32F103RC [ARMCC]）
+- 固件大小明细（Code、RO-data、RW-data、ZI-data）及 Flash/RAM 汇总
+- 编译耗时
+- 产物列表（AXF/HEX/BIN 及文件大小）
+- 错误/警告统计
+- 若失败：失败分类和日志证据
+
+示例输出格式：
+
+```
+编译成功 ✅
+  工程: Demo02.uvprojx → 目标: Demo02
+  芯片: STM32F103RC | 工具链: ARMCC
+  固件大小: Flash ≈ 3.2 KB  RAM ≈ 1.6 KB
+  产物: Demo02.axf (518.9 KB), Demo02.hex (9.0 KB)
+  编译耗时: 00:00:05
+```
+
 - 用 `artifact_path`、`artifact_kind`、`target_mcu` 和 `toolchain` 更新 `Project Profile`。
-- 成功后推荐 `flash-openocd` 或 `debug-gdb-openocd`。
+- 成功后推荐 `flash-keil`、`flash-openocd` 或 `debug-gdb-openocd`。
 
 ## 交接关系
 
-- 当下一步意图是给硬件烧录程序时，将成功构建结果交给 `flash-openocd`。
+- 当下一步意图是给硬件烧录程序时，将成功构建结果交给 `flash-keil`（使用 Keil 内置调试器）或 `flash-openocd`（使用 OpenOCD）。
 - 当下一步需要符号信息或调试会话时，将成功构建结果交给 `debug-gdb-openocd`。
 - 只有当构建过程暴露出互相矛盾的工程元数据时，才将部分结果回交给 `project-intake`。
