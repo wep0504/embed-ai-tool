@@ -2,7 +2,17 @@
 
 可复用的 Codex skill 集合，服务嵌入式 MCU 固件开发场景。覆盖工程识别、多工具链构建、烧录、调试、串口监视、外设驱动适配等主干流程，支持 Linux、macOS、Windows 三平台。
 
-## 快速开始
+## 一键安装
+
+在任意支持 skill 的大模型对话中输入：
+
+```
+帮我安装 https://github.com/LeoKemp223/em_skill.git 的 skill
+```
+
+大模型会自动克隆仓库、复制 skill 到你的工程目录并完成配置。
+
+## 手动安装
 
 ### 前置条件
 
@@ -56,11 +66,18 @@ python3 scripts/em_config.py path
 | `build-keil` | 配置并构建基于 Keil MDK 的固件工程 |
 | `build-iar` | 配置并构建基于 IAR EWARM 的固件工程 |
 | `build-platformio` | 配置并构建基于 PlatformIO 的固件工程 |
+| `flash-keil` | 通过 Keil MDK 内置调试器烧录固件 |
 | `flash-openocd` | 通过 OpenOCD 烧录 ELF/HEX/BIN 产物 |
+| `flash-platformio` | 通过 PlatformIO 上传机制烧录固件 |
 | `debug-gdb-openocd` | 通过 OpenOCD 附着 GDB，支持下载后调试、仅附着和崩溃现场排查 |
+| `debug-platformio` | 通过 PlatformIO 内置 GDB 调试 |
 | `serial-monitor` | 选择串口并抓取运行日志 |
+| `modbus-debug` | Modbus RTU/TCP 寄存器读写、从站扫描和持续监控 |
+| `can-debug` | CAN 总线帧监听、发送和节点扫描 |
+| `visa-debug` | VISA 仪器 SCPI 通信、波形捕获和截图 |
 | `peripheral-driver` | 搜索并适配开源 BSP 外设驱动到目标工程 |
 | `stm32-hal-development` | STM32 HAL 库开发指导与最佳实践 |
+| `workflow` | 串联多个 skill 的流水线编排（编译+烧录+监控/调试） |
 
 ## 仓库结构
 
@@ -71,11 +88,18 @@ python3 scripts/em_config.py path
 │   ├── build-keil/             # Keil 构建
 │   ├── build-iar/              # IAR 构建
 │   ├── build-platformio/       # PlatformIO 构建
+│   ├── flash-keil/             # Keil 烧录
 │   ├── flash-openocd/          # OpenOCD 烧录
+│   ├── flash-platformio/       # PlatformIO 烧录
 │   ├── debug-gdb-openocd/      # GDB 调试
+│   ├── debug-platformio/       # PlatformIO 调试
 │   ├── serial-monitor/         # 串口监视
+│   ├── modbus-debug/           # Modbus 调试
+│   ├── can-debug/              # CAN 总线调试
+│   ├── visa-debug/             # VISA 仪器调试
 │   ├── peripheral-driver/      # 外设驱动适配
-│   └── stm32-hal-development/  # STM32 HAL 开发
+│   ├── stm32-hal-development/  # STM32 HAL 开发
+│   └── workflow/               # 流水线编排
 ├── shared/                     # 共享约定
 │   ├── contracts.md            # 上下文交接合约
 │   ├── failure-taxonomy.md     # 失败分类
