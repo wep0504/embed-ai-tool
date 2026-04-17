@@ -251,7 +251,8 @@ def build_flash_command(
     if custom_command:
         cmd.extend(["-c", custom_command])
     else:
-        program_parts = [f"program {artifact}"]
+        artifact_posix = str(artifact).replace("\\", "/")
+        program_parts = [f"program {artifact_posix}"]
         if artifact_kind == "bin" and base_address:
             program_parts.append(base_address)
         if verify:

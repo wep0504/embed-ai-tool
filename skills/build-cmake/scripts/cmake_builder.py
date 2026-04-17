@@ -324,6 +324,7 @@ def run_cmake_build(
     target: str | None,
     jobs: int | None,
     verbose: bool,
+    source_dir: Path | None = None,
 ) -> tuple[bool, str, list[str]]:
     cmd: list[str] = ["cmake", "--build"]
 
@@ -342,10 +343,11 @@ def run_cmake_build(
     cmd_str = " ".join(cmd)
     print(f"🔨 构建命令: {cmd_str}")
 
+    cwd = str(source_dir) if source_dir and preset else None
     start = time.time()
     try:
         result = subprocess.run(
-            cmd, capture_output=True, text=True, timeout=600,
+            cmd, capture_output=True, text=True, timeout=600, cwd=cwd,
         )
     except subprocess.TimeoutExpired:
         return False, cmd_str, ["❌ 构建超时（600 秒）"]
@@ -581,6 +583,7 @@ def main() -> int:
         target=args.target,
         jobs=args.jobs,
         verbose=args.verbose,
+        source_dir=source_dir,
     )
     all_evidence = conf_evidence + bld_evidence
     if not ok:
