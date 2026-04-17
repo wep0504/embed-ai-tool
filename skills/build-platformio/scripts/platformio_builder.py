@@ -54,6 +54,7 @@ class PIOEnvironment:
     board: str
     framework: str
     upload_protocol: str
+    debug_tool: str
     is_default: bool
 
 
@@ -155,6 +156,7 @@ def parse_platformio_ini(project_dir: Path) -> tuple[list[PIOEnvironment], list[
             board=config.get(section, "board", fallback=""),
             framework=config.get(section, "framework", fallback=""),
             upload_protocol=config.get(section, "upload_protocol", fallback=""),
+            debug_tool=config.get(section, "debug_tool", fallback=""),
             is_default=env_name in default_envs,
         ))
 
