@@ -23,6 +23,10 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+_REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(_REPO_ROOT / "shared"))
+from tool_config import get_tool_path, set_tool_path
+
 try:
     import xml.etree.ElementTree as ET
 except ImportError:
@@ -91,6 +95,11 @@ def find_uv4(explicit_path: str | None = None) -> str | None:
         if p.exists():
             return str(p)
         return None
+
+    # 配置文件
+    configured = get_tool_path("uv4")
+    if configured and Path(configured).exists():
+        return configured
 
     # 环境变量
     keil_root = os.environ.get("KEIL_ROOT") or os.environ.get("MDK_ROOT")
@@ -432,6 +441,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--scan", help="扫描指定目录中的 Keil 工程文件")
     parser.add_argument("--scan-artifacts", help="仅扫描指定目录中的产物")
     parser.add_argument("--uv4", help="显式指定 UV4.exe 路径")
+    parser.add_argument("--save-config", action="store_true", help="探测成功后保存工具路径到配置")
     parser.add_argument("--log", help="编译日志输出路径")
     parser.add_argument("-v", "--verbose", action="store_true", help="详细输出")
     return parser
@@ -445,6 +455,9 @@ def main() -> int:
     if args.detect:
         env = detect_environment(args.uv4)
         print_detect_report(env)
+        if args.save_config and env["uv4"]["available"]:
+            cfg_path = set_tool_path("uv4", env["uv4"]["path"])
+            print(f"  💾 已保存到 {cfg_path}")
         return 0 if env["uv4"]["available"] else 1
 
     # 扫描工程文件

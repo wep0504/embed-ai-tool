@@ -23,6 +23,10 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+_REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(_REPO_ROOT / "shared"))
+from tool_config import get_tool_path, set_tool_path
+
 
 ARTIFACT_EXTENSIONS = {".elf": "elf", ".hex": "hex", ".bin": "bin", ".axf": "elf"}
 ARTIFACT_PRIORITY = {"elf": 1, "hex": 2, "bin": 3}
@@ -54,6 +58,20 @@ class FlashResult:
 # ---------------------------------------------------------------------------
 
 def check_openocd() -> tuple[bool, str | None]:
+    # 配置文件
+    configured = get_tool_path("openocd")
+    if configured:
+        configured_path = shutil.which(configured) or configured
+        if Path(configured_path).exists():
+            try:
+                result = subprocess.run(
+                    [configured_path, "--version"], capture_output=True, text=True, timeout=5,
+                )
+                version = (result.stdout or result.stderr).strip().split("\n")[0]
+                return True, version
+            except Exception:
+                return True, None
+
     path = shutil.which("openocd")
     if not path:
         return False, None
@@ -358,6 +376,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--no-detect", action="store_true", help="禁止自动探测调试接口")
     parser.add_argument("--scan-configs", help="扫描指定目录中的 OpenOCD 配置线索")
     parser.add_argument("--openocd-command", help="自定义 OpenOCD 烧录命令")
+    parser.add_argument("--save-config", action="store_true", help="探测成功后保存工具路径到配置")
     parser.add_argument("-v", "--verbose", action="store_true", help="详细输出")
     return parser
 
@@ -371,6 +390,11 @@ def main() -> int:
         available, version = check_openocd()
         probes = detect_probes() if available else []
         print_detect_report(available, version, probes)
+        if args.save_config and available:
+            ocd_path = shutil.which("openocd")
+            if ocd_path:
+                cfg_path = set_tool_path("openocd", ocd_path)
+                print(f"  💾 已保存到 {cfg_path}")
         return 0 if available else 1
 
     # 扫描配置模式

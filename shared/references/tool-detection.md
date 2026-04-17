@@ -2,6 +2,18 @@
 
 当某个 skill 需要定位宿主工具时，优先复用本文逻辑，避免在多个地方重复写同一套规则。
 
+## 解析优先级
+
+所有工具路径按以下顺序解析，先命中者优先：
+
+1. CLI 参数（`--uv4`、`--iar-root`、`--gdb` 等）
+2. 配置文件（工作区 `.em_skill.json` 覆盖全局 `~/.config/em_skill/config.json`）
+3. 环境变量（`KEIL_ROOT`、`IAR_ROOT` 等）
+4. 硬编码常见安装路径
+5. `PATH` 搜索（`shutil.which`）
+
+配置文件通过 `shared/tool_config.py` 读写，CLI 管理工具为 `scripts/em_config.py`。
+
 ## 构建工具
 
 面向 CMake 工作流的探测顺序：

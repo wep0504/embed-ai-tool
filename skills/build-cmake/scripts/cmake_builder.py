@@ -24,6 +24,10 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+_REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(_REPO_ROOT / "shared"))
+from tool_config import get_tool_path, set_tool_path
+
 
 ARTIFACT_PRIORITY = {"elf": 1, "hex": 2, "bin": 3}
 ARTIFACT_EXTENSIONS = {".elf": "elf", ".hex": "hex", ".bin": "bin", ".axf": "elf"}
@@ -72,6 +76,14 @@ class BuildResult:
 # ---------------------------------------------------------------------------
 
 def find_tool(name: str, alt_names: list[str] | None = None) -> ToolInfo:
+    # 配置文件
+    configured = get_tool_path(name)
+    if configured:
+        configured_path = shutil.which(configured) or configured
+        if Path(configured_path).exists():
+            version = _get_version(configured_path)
+            return ToolInfo(name=name, path=configured_path, version=version)
+
     candidates = [name] + (alt_names or [])
     for candidate in candidates:
         path = shutil.which(candidate)
@@ -440,6 +452,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--clean", action="store_true", help="构建前清理")
     parser.add_argument("--scan-artifacts", help="仅扫描指定目录中的产物")
     parser.add_argument("--extra-args", action="append", default=[], help="传递给 cmake 的额外参数")
+    parser.add_argument("--save-config", action="store_true", help="探测成功后保存工具路径到配置")
     parser.add_argument("-v", "--verbose", action="store_true", help="详细输出")
     parser.add_argument("-j", "--jobs", type=int, help="并行构建任务数")
     return parser
@@ -453,6 +466,12 @@ def main() -> int:
     if args.detect:
         env = detect_environment()
         print_detect_report(env)
+        if args.save_config:
+            for tool_key in ["cmake", "ninja", "make", "arm_gcc"]:
+                info = env[tool_key]
+                if info["available"]:
+                    cfg_path = set_tool_path(tool_key.replace("_", "-"), info["path"])
+                    print(f"  💾 {tool_key} 已保存到 {cfg_path}")
         return 0 if env["cmake"]["available"] else 1
 
     # 仅扫描产物模式

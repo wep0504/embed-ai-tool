@@ -23,6 +23,10 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+_REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(_REPO_ROOT / "shared"))
+from tool_config import get_tool_path, set_tool_path
+
 
 INTERFACE_CONFIGS = {
     "stlink": "interface/stlink.cfg",
@@ -55,6 +59,20 @@ class DebugResult:
 # ---------------------------------------------------------------------------
 
 def find_tool(name: str, alt_names: list[str] | None = None) -> tuple[str | None, str | None]:
+    # 配置文件
+    configured = get_tool_path(name)
+    if configured:
+        configured_path = shutil.which(configured) or configured
+        if Path(configured_path).exists():
+            try:
+                r = subprocess.run(
+                    [configured_path, "--version"], capture_output=True, text=True, timeout=5,
+                )
+                ver = (r.stdout or r.stderr).strip().split("\n")[0]
+            except Exception:
+                ver = None
+            return configured_path, ver
+
     for candidate in [name] + (alt_names or []):
         path = shutil.which(candidate)
         if path:
@@ -80,6 +98,21 @@ def find_gdb(explicit: str | None) -> tuple[str | None, str | None]:
         except Exception:
             ver = None
         return path, ver
+
+    # 配置文件
+    configured = get_tool_path("arm-none-eabi-gdb")
+    if configured:
+        configured_path = shutil.which(configured) or configured
+        if Path(configured_path).exists():
+            try:
+                r = subprocess.run(
+                    [configured_path, "--version"], capture_output=True, text=True, timeout=5,
+                )
+                ver = (r.stdout or r.stderr).strip().split("\n")[0]
+            except Exception:
+                ver = None
+            return configured_path, ver
+
     return find_tool(GDB_CANDIDATES[0], GDB_CANDIDATES[1:])
 
 
@@ -399,6 +432,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--target", action="append", default=[], help="OpenOCD 目标配置，可重复")
     parser.add_argument("--config", action="append", default=[], help="额外 OpenOCD -f 配置，可重复")
     parser.add_argument("--no-detect", action="store_true", help="禁止自动探测调试接口")
+    parser.add_argument("--save-config", action="store_true", help="探测成功后保存工具路径到配置")
     parser.add_argument("--port", type=int, default=DEFAULT_GDB_PORT, help="GDB 服务端口")
     parser.add_argument("-v", "--verbose", action="store_true", help="详细输出")
     return parser
@@ -412,6 +446,13 @@ def main() -> int:
     if args.detect:
         env = detect_environment(args.gdb)
         print_detect_report(env)
+        if args.save_config:
+            if env["openocd"]["available"]:
+                cfg_path = set_tool_path("openocd", env["openocd"]["path"])
+                print(f"  💾 openocd 已保存到 {cfg_path}")
+            if env["gdb"]["available"]:
+                cfg_path = set_tool_path("arm-none-eabi-gdb", env["gdb"]["path"])
+                print(f"  💾 gdb 已保存到 {cfg_path}")
         ok = env["openocd"]["available"] and env["gdb"]["available"]
         return 0 if ok else 1
 

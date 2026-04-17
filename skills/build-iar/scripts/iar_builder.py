@@ -21,6 +21,10 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+_REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(_REPO_ROOT / "shared"))
+from tool_config import get_tool_path, set_tool_path
+
 try:
     import xml.etree.ElementTree as ET
 except ImportError:
@@ -111,6 +115,11 @@ def find_iarbuild(explicit_root: str | None = None) -> str | None:
             if found:
                 return found
         return None
+
+    # 配置文件
+    configured = get_tool_path("iarbuild")
+    if configured and Path(configured).exists():
+        return configured
 
     # 环境变量
     for env_var in ["IAR_ROOT", "EWARM_ROOT"]:
@@ -436,6 +445,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--scan", help="扫描指定目录中的 IAR 工程文件")
     parser.add_argument("--scan-artifacts", help="仅扫描指定目录中的产物")
     parser.add_argument("--iar-root", help="显式指定 IAR 安装根目录")
+    parser.add_argument("--save-config", action="store_true", help="探测成功后保存工具路径到配置")
     parser.add_argument("--parallel", type=int, help="并行编译任务数")
     parser.add_argument("-v", "--verbose", action="store_true", help="详细输出")
     return parser
@@ -449,6 +459,9 @@ def main() -> int:
     if args.detect:
         env = detect_environment(args.iar_root)
         print_detect_report(env)
+        if args.save_config and env["iarbuild"]["available"]:
+            cfg_path = set_tool_path("iarbuild", env["iarbuild"]["path"])
+            print(f"  💾 已保存到 {cfg_path}")
         return 0 if env["iarbuild"]["available"] else 1
 
     # 扫描工程文件

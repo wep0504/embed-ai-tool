@@ -23,6 +23,10 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+_REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(_REPO_ROOT / "shared"))
+from tool_config import get_tool_path, set_tool_path
+
 
 ARTIFACT_EXTENSIONS = {".elf": "elf", ".hex": "hex", ".bin": "bin"}
 ARTIFACT_PRIORITY = {"elf": 1, "hex": 2, "bin": 3}
@@ -65,6 +69,13 @@ class BuildResult:
 # ---------------------------------------------------------------------------
 
 def find_pio() -> str | None:
+    # 配置文件
+    configured = get_tool_path("pio")
+    if configured:
+        configured_path = shutil.which(configured) or configured
+        if Path(configured_path).exists():
+            return configured_path
+
     return shutil.which("pio") or shutil.which("platformio")
 
 
@@ -311,6 +322,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--upload", action="store_true", help="构建并上传固件")
     parser.add_argument("--list-devices", action="store_true", help="列出已连接的设备")
     parser.add_argument("--scan-artifacts", help="仅扫描指定目录中的产物")
+    parser.add_argument("--save-config", action="store_true", help="探测成功后保存工具路径到配置")
     parser.add_argument("-v", "--verbose", action="store_true", help="详细输出")
     parser.add_argument("-j", "--jobs", type=int, help="并行构建任务数")
     return parser
@@ -324,6 +336,9 @@ def main() -> int:
     if args.detect:
         env = detect_environment()
         print_detect_report(env)
+        if args.save_config and env["pio"]["available"]:
+            cfg_path = set_tool_path("pio", env["pio"]["path"])
+            print(f"  💾 已保存到 {cfg_path}")
         return 0 if env["pio"]["available"] else 1
 
     # 列出设备
