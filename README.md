@@ -7,7 +7,7 @@
 在任意支持 skill 的大模型对话中输入：
 
 ```
-帮我安装 https://github.com/LeoKemp223/em_skill.git 的 skill
+帮我安装 https://github.com/LeoKemp223/embed-ai-tool.git 的 skill
 ```
 
 大模型会自动克隆仓库、复制 skill 到你的工程目录并完成配置。
@@ -22,9 +22,9 @@
 ### 安装所有 skill
 
 ```bash
-git clone https://github.com/LeoKemp223/em_skill.git
-cp -r em_skill/skills/*  your-project/.claude/skills/
-cp -r em_skill/shared    your-project/.claude/skills/shared
+git clone https://github.com/LeoKemp223/embed-ai-tool.git
+cp -r embed-ai-tool/skills/*  your-project/.claude/skills/
+cp -r embed-ai-tool/shared    your-project/.claude/skills/shared
 ```
 
 ### 安装指定 skill
@@ -32,12 +32,12 @@ cp -r em_skill/shared    your-project/.claude/skills/shared
 只复制你需要的模块：
 
 ```bash
-git clone https://github.com/LeoKemp223/em_skill.git
+git clone https://github.com/LeoKemp223/embed-ai-tool.git
 
 # 示例：只安装 build-cmake 和 flash-openocd
-cp -r em_skill/skills/build-cmake   your-project/.claude/skills/
-cp -r em_skill/skills/flash-openocd your-project/.claude/skills/
-cp -r em_skill/shared               your-project/.claude/skills/shared
+cp -r embed-ai-tool/skills/build-cmake   your-project/.claude/skills/
+cp -r embed-ai-tool/skills/flash-openocd your-project/.claude/skills/
+cp -r embed-ai-tool/shared               your-project/.claude/skills/shared
 ```
 
 ### 工具路径配置
