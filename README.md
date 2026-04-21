@@ -80,6 +80,67 @@ python3 scripts/em_config.py path
 | `peripheral-driver` | 搜索并适配开源 BSP 外设驱动到目标工程 |
 | `stm32-hal-development` | STM32 HAL 库开发指导与最佳实践 |
 | `workflow` | 串联多个 skill 的流水线编排（编译+烧录+监控/调试） |
+| `idf-setup` | 安装和管理 ESP-IDF 开发环境，支持版本选择和国内外镜像源切换 |
+| `build-idf` | 配置目标芯片并构建 ESP-IDF 固件工程 |
+| `flash-idf` | 通过 ESP-IDF 工具链烧录固件并支持 JTAG 调试 |
+
+## LLM 使用示例
+
+安装 skill 后，在对话中用自然语言即可触发，也可以直接调用 skill 命令。
+
+### 自然语言
+
+```
+👤 编译烧录
+🤖 检测到 Keil 工程 Project.uvprojx，目标芯片 STM32F103C8。
+   ✅ 编译成功，产物: build/Project.axf (48.2 KB)
+   检测到 ST-Link V2，烧录中...
+   ✅ 烧录成功，已校验并复位。
+
+👤 编译不过，看看
+🤖 ❌ 构建失败: src/main.c:42: undefined reference to `HAL_UART_Transmit`
+   原因: CMakeLists.txt 缺少 stm32f4xx_hal_uart.c，已修复并重新构建。
+   ✅ 构建成功，产物: build/debug/firmware.elf (128.5 KB)
+
+👤 看串口
+🤖 检测到 COM3 (115200)，抓取日志：
+   [00:00.000] System Start
+   [00:00.012] UART initialized
+
+👤 调试下 UART
+🤖 已在 HAL_UART_Transmit 入口设置断点。
+   断点命中: huart->Init.BaudRate = 9600，与预期 115200 不符。
+   建议检查 UART 初始化代码中的波特率设置。
+
+👤 装一下 ESP-IDF 5.3
+🤖 检测到国内网络，使用乐鑫镜像源。
+   📥 克隆 ESP-IDF v5.3.2 ...
+   🔧 安装工具链 ...
+   ✅ ESP-IDF v5.3.2 安装成功，路径: ~/esp/esp-idf
+   💡 请执行: . ~/esp/esp-idf/export.sh
+```
+
+### Skill 命令
+
+```bash
+# Keil 工程：编译 + 烧录 + 串口
+/build-keil
+/flash-keil
+/serial-monitor
+
+# CMake 工程：编译 + 烧录 + 调试
+/build-cmake
+/flash-openocd
+/debug-gdb-openocd
+
+# ESP-IDF 工程：安装 + 编译 + 烧录
+/idf-setup
+/build-idf
+/flash-idf
+
+# 一键流水线（编译 → 烧录 → 监控）
+/workflow
+```
 
 ## 仓库结构
 

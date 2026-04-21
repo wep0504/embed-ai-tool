@@ -22,6 +22,9 @@
 | `serial_port` | 否 | 首选串口设备路径或 COM 口。 |
 | `baud_rate` | 否 | 首选串口波特率。 |
 | `notes` | 否 | 不值得单独增加结构化字段的简短人工备注。 |
+| `idf_path` | 否 | ESP-IDF 安装路径。 |
+| `idf_version` | 否 | ESP-IDF 版本号，例如 `v5.3.2`。 |
+| `idf_target` | 否 | ESP-IDF 目标芯片，例如 `esp32`、`esp32s3`。 |
 
 ## 动作词
 
