@@ -162,6 +162,9 @@ python3 scripts/em_config.py path
     └── em_config.py            # 工具路径配置 CLI
 ```
 
+<img width="2955" height="1955" alt="PixPin_2026-04-26_22-31-41" src="https://github.com/user-attachments/assets/e62e3118-929e-494c-8d24-c9dcebec22c3" />
+
+
 ## 共享约定
 
 所有 skill 围绕同一套核心上下文进行输入与输出：
