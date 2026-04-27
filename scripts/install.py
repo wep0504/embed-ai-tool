@@ -40,6 +40,10 @@ DETECT_TOOLS = [
     "platformio",
     "pio",
     "idf.py",
+    "JLinkExe",
+    "JLinkGDBServerCLExe",
+    "cppcheck",
+    "clang-tidy",
 ]
 
 

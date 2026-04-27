@@ -61,3 +61,43 @@ ARM MCU 目标的 GDB 查找顺序：
 5. 工作区内的厂商文档
 
 如果检查后仍有多个合理配置路径，应返回 `ambiguous-context`。
+
+## J-Link 工具
+
+JLinkExe（J-Link Commander）查找顺序：
+
+1. 配置文件（`get_tool_path("jlink")`）
+2. `JLinkExe`（Linux/macOS PATH）
+3. `JLink.exe`（Windows PATH）
+4. `/opt/SEGGER/JLink/JLinkExe`（Linux/macOS）
+5. `C:\Program Files\SEGGER\JLink\JLink.exe` / `C:\Program Files (x86)\SEGGER\JLink\JLink.exe`（Windows）
+
+JLinkGDBServer 查找顺序：
+
+1. 配置文件（`get_tool_path("jlink-gdbserver")`）
+2. `JLinkGDBServerCLExe`（Linux/macOS PATH）
+3. `JLinkGDBServerCL.exe`（Windows PATH）
+4. `/opt/SEGGER/JLink/JLinkGDBServerCLExe`（Linux/macOS）
+5. `C:\Program Files\SEGGER\JLink\JLinkGDBServerCL.exe`（Windows）
+
+`--device` 参数为必需项，J-Link 无法安全推断设备名。
+
+## 静态分析工具
+
+cppcheck 查找顺序：
+
+1. 配置文件（`get_tool_path("cppcheck")`）
+2. `cppcheck`（PATH 搜索）
+3. MISRA addon 需要 cppcheck 安装目录下的 `addons/misra.py`
+
+clang-tidy 查找顺序：
+
+1. 配置文件（`get_tool_path("clang-tidy")`）
+2. `clang-tidy`（PATH 搜索）
+3. 准确分析需要 `compile_commands.json`
+
+GCC analyzer：
+
+1. `arm-none-eabi-gcc`（PATH 搜索）
+2. `gcc`（宿主 GCC）
+3. 需要 GCC 12+ 才有 `-fanalyzer` 支持

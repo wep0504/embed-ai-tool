@@ -27,6 +27,11 @@ REQUIRED_SKILLS = [
     "serial-monitor",
     "debug-gdb-openocd",
     "peripheral-driver",
+    "flash-jlink",
+    "debug-jlink",
+    "memory-analysis",
+    "rtos-debug",
+    "static-analysis",
 ]
 
 REQUIRED_SECTIONS = [

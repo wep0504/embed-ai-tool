@@ -25,6 +25,9 @@
 | `idf_path` | 否 | ESP-IDF 安装路径。 |
 | `idf_version` | 否 | ESP-IDF 版本号，例如 `v5.3.2`。 |
 | `idf_target` | 否 | ESP-IDF 目标芯片，例如 `esp32`、`esp32s3`。 |
+| `jlink_device` | 否 | J-Link 设备名称，例如 `STM32F407VG`。 |
+| `jlink_interface` | 否 | J-Link 接口类型：`SWD` 或 `JTAG`。 |
+| `rtos` | 否 | RTOS 类型：`freertos`、`rt-thread` 或 `zephyr`。 |
 
 ## 动作词
 

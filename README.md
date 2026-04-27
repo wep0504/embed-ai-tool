@@ -107,6 +107,11 @@ python3 scripts/em_config.py path
 | `workflow` | 串联多个 skill 的流水线编排（编译+烧录+监控/调试） |
 | `build-idf` | 配置目标芯片并构建 ESP-IDF 固件工程 |
 | `flash-idf` | 通过 ESP-IDF 工具链烧录固件并支持 JTAG 调试 |
+| `flash-jlink` | 通过 SEGGER J-Link 烧录固件，支持 RTT 日志捕获 |
+| `debug-jlink` | 通过 J-Link GDB Server 进行固件在线调试和崩溃分析 |
+| `memory-analysis` | 解析 .map 文件或 ELF，生成内存使用报告和符号大小排名 |
+| `rtos-debug` | FreeRTOS/RT-Thread/Zephyr 线程感知调试，栈水位和死锁检测 |
+| `static-analysis` | cppcheck/clang-tidy/GCC analyzer 静态分析，MISRA-C 合规 |
 
 ## LLM 使用示例
 
@@ -174,11 +179,19 @@ python3 scripts/em_config.py path
 │   ├── visa-debug/             # VISA 仪器调试
 │   ├── peripheral-driver/      # 外设驱动适配
 │   ├── stm32-hal-development/  # STM32 HAL 开发
-│   └── workflow/               # 流水线编排
+│   ├── workflow/               # 流水线编排
+│   ├── build-idf/              # ESP-IDF 构建
+│   ├── flash-idf/              # ESP-IDF 烧录
+│   ├── flash-jlink/            # J-Link 烧录
+│   ├── debug-jlink/            # J-Link GDB 调试
+│   ├── memory-analysis/        # 固件内存分析
+│   ├── rtos-debug/             # RTOS 调试
+│   └── static-analysis/        # 静态分析
 ├── shared/                     # 共享约定
 │   ├── contracts.md            # 上下文交接合约
 │   ├── failure-taxonomy.md     # 失败分类
 │   ├── platform-compatibility.md
+│   ├── project_detect.py       # 统一项目探测模块
 │   └── references/
 ├── templates/                  # Skill 模板
 │   └── skill-template/
@@ -218,7 +231,7 @@ python3 scripts/validate_repo.py
 
 ## 后续扩展
 
-仓库结构已为后续扩展预留空间，例如 `flash-jlink`、`flash-pyocd`、`vendor-tools`、`fault-triage`、`rtos-debug`、`trace-analysis`，无需改动核心约定。
+仓库结构已为后续扩展预留空间，例如 `flash-pyocd`、`vendor-tools`、`fault-triage`、`trace-analysis`，无需改动核心约定。
 
 
 感谢 LinuxDo 社区的支持！
