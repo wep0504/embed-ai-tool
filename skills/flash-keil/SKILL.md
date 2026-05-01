@@ -21,6 +21,8 @@ description: 当需要通过 Keil MDK 内置调试器烧录固件到目标板时
 - 复用 `build-keil` 的 UV4.exe 探测逻辑（配置文件 → 环境变量 → 常见路径 → PATH）。
 - 解析工程 XML 中的 `<DriverSelection>` 识别调试器类型（ST-Link、J-Link、CMSIS-DAP、ULINK）。
 - 若未指定目标，默认使用工程中的第一个 Target。
+- 统一优先级：显式输入 > 工作区线索 > 历史上下文 > 默认值。
+- 若多个候选同样合理且选择错误会破坏流程，标记为 ambiguous-context 并停止猜测。
 
 ## 执行步骤
 
@@ -37,6 +39,8 @@ description: 当需要通过 Keil MDK 内置调试器烧录固件到目标板时
 - `environment-missing`：Keil MDK 未安装或 UV4.exe 不可用。
 - `connection-failure`：调试器连接失败（USB 未连接、驱动问题、目标板未上电）。
 - `project-config-error`：工程文件中的 Flash 配置无效或目标名不存在。
+- 失败时至少提供：烧录命令、探针/端口识别结果、产物文件路径与校验信息。
+- 可恢复失败优先建议：重连设备并重试 1 次；必要时切换端口或降低速度后再试，超限后返回 connection-failure 或 	arget-response-abnormal。
 
 ## 平台说明
 
@@ -73,3 +77,5 @@ description: 当需要通过 Keil MDK 内置调试器烧录固件到目标板时
 
 - 从 `build-keil` 接收编译成功的工程信息。
 - 烧录成功后交给 `serial-monitor`（查看串口输出）或 `debug-gdb-openocd`（在线调试）。
+- 不交接直接结束：仅需返回烧录失败结论且不继续联调时，结束当前 skill。
+

@@ -41,7 +41,9 @@ description: 当需要串联多个 skill 完成编译+烧录+监控或编译+烧
 ## 失败分流
 
 - `environment-missing`：对应 skill 脚本不存在。
-- `target-response-abnormal`：某个步骤执行失败（编译错误、烧录失败等）。
+- `project-config-error`：流水线参数不完整、构建系统与工程类型不匹配、步骤组合非法。
+- `target-response-abnormal`：某个步骤执行失败（编译错误、烧录失败、调试中断等）。
+- 失败时至少提供：失败步骤编号、子命令、关键日志和上游输入快照。
 
 ## 输出约定
 
@@ -75,3 +77,14 @@ description: 当需要串联多个 skill 完成编译+烧录+监控或编译+烧
 - 编排 `flash-keil` / `flash-openocd` / `flash-platformio` 的烧录步骤。
 - 编排 `serial-monitor` 的监控步骤。
 - 编排 `debug-gdb-openocd` / `debug-platformio` 的调试步骤。
+
+## 自动探测
+
+- 统一优先级：显式输入 > 工作区线索 > 历史上下文 > 默认值。
+- 若多个候选同样合理且选择错误会破坏流程，标记为 ambiguous-context 并停止猜测。
+
+## 平台说明
+
+- 流水线编排逻辑跨平台一致，但底层依赖（Keil、OpenOCD、J-Link、PlatformIO）受宿主平台影响较大。
+- Windows 下路径与串口名称（如 `COMx`）需显式传入，避免多设备场景下误选目标。
+- Linux/macOS 下建议统一使用绝对路径与可执行路径探测，减少 shell 环境差异导致的失败。

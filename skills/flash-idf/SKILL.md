@@ -33,6 +33,8 @@ description: 当需要通过 ESP-IDF 工具链烧录固件到 ESP32 系列芯片
 - 读取 `sdkconfig` 中的 Flash 大小和分区表配置。
 - 检查 `build/` 目录中是否存在有效的烧录产物（`*.bin`、`flasher_args.json`）。
 - 探测结果仅作为候选列表展示给用户，不自动选择。
+- 统一优先级：显式输入 > 工作区线索 > 历史上下文 > 默认值。
+- 若多个候选同样合理且选择错误会破坏流程，标记为 ambiguous-context 并停止猜测。
 
 ## 执行步骤
 
@@ -53,6 +55,8 @@ description: 当需要通过 ESP-IDF 工具链烧录固件到 ESP32 系列芯片
 - 当 `build/` 目录不存在或产物缺失时，返回 `artifact-missing`，推荐 `build-idf`。
 - 当烧录过程中芯片无响应时，返回 `target-response-abnormal`。
 - 当存在多个串口设备且无法确定目标时，返回 `ambiguous-context`。
+- 失败时至少提供：烧录命令、探针/端口识别结果、产物文件路径与校验信息。
+- 可恢复失败优先建议：重连设备并重试 1 次；必要时切换端口或降低速度后再试，超限后返回 connection-failure 或 	arget-response-abnormal。
 
 ## 平台说明
 
@@ -72,3 +76,5 @@ description: 当需要通过 ESP-IDF 工具链烧录固件到 ESP32 系列芯片
 - 当下一步要看运行日志时，将成功烧录结果交给 `serial-monitor`。
 - 当用户需要断点调试或崩溃分析时，将结果交给 `debug-gdb-openocd`。
 - 当固件产物缺失时，推荐用户先使用 `build-idf` 编译。
+- 不交接直接结束：仅需返回烧录失败结论且不继续联调时，结束当前 skill。
+

@@ -1,0 +1,107 @@
+Suggested migration snippets (json):
+[
+  {
+    "skill_path": "skills\\build-cmake\\SKILL.md",
+    "rule": "显式输入 > 工作区线索 > 历史上下文 > 默认值",
+    "snippet_lines": [
+      "## 自动探测",
+      "- 统一优先级：`显式输入 > 工作区线索 > 历史上下文 > 默认值`。"
+    ]
+  },
+  {
+    "skill_path": "skills\\debug-gdb-openocd\\SKILL.md",
+    "rule": "显式输入 > 工作区线索 > 历史上下文 > 默认值",
+    "snippet_lines": [
+      "## 自动探测",
+      "- 统一优先级：`显式输入 > 工作区线索 > 历史上下文 > 默认值`。"
+    ]
+  },
+  {
+    "skill_path": "skills\\debug-jlink\\SKILL.md",
+    "rule": "显式输入 > 工作区线索 > 历史上下文 > 默认值",
+    "snippet_lines": [
+      "## 自动探测",
+      "- 统一优先级：`显式输入 > 工作区线索 > 历史上下文 > 默认值`。"
+    ]
+  },
+  {
+    "skill_path": "skills\\flash-jlink\\SKILL.md",
+    "rule": "显式输入 > 工作区线索 > 历史上下文 > 默认值",
+    "snippet_lines": [
+      "## 自动探测",
+      "- 统一优先级：`显式输入 > 工作区线索 > 历史上下文 > 默认值`。"
+    ]
+  },
+  {
+    "skill_path": "skills\\flash-openocd\\SKILL.md",
+    "rule": "显式输入 > 工作区线索 > 历史上下文 > 默认值",
+    "snippet_lines": [
+      "## 自动探测",
+      "- 统一优先级：`显式输入 > 工作区线索 > 历史上下文 > 默认值`。"
+    ]
+  },
+  {
+    "skill_path": "skills\\memory-analysis\\SKILL.md",
+    "rule": "ambiguous-context",
+    "snippet_lines": [
+      "## 自动探测",
+      "- 若多个候选同样合理且选择错误会破坏流程，标记为 `ambiguous-context` 并停止猜测。"
+    ]
+  },
+  {
+    "skill_path": "skills\\memory-analysis\\SKILL.md",
+    "rule": "显式输入 > 工作区线索 > 历史上下文 > 默认值",
+    "snippet_lines": [
+      "## 自动探测",
+      "- 统一优先级：`显式输入 > 工作区线索 > 历史上下文 > 默认值`。"
+    ]
+  },
+  {
+    "skill_path": "skills\\peripheral-driver\\SKILL.md",
+    "rule": "ambiguous-context",
+    "snippet_lines": [
+      "## 自动探测",
+      "- 若多个候选同样合理且选择错误会破坏流程，标记为 `ambiguous-context` 并停止猜测。"
+    ]
+  },
+  {
+    "skill_path": "skills\\peripheral-driver\\SKILL.md",
+    "rule": "显式输入 > 工作区线索 > 历史上下文 > 默认值",
+    "snippet_lines": [
+      "## 自动探测",
+      "- 统一优先级：`显式输入 > 工作区线索 > 历史上下文 > 默认值`。"
+    ]
+  },
+  {
+    "skill_path": "skills\\rtos-debug\\SKILL.md",
+    "rule": "显式输入 > 工作区线索 > 历史上下文 > 默认值",
+    "snippet_lines": [
+      "## 自动探测",
+      "- 统一优先级：`显式输入 > 工作区线索 > 历史上下文 > 默认值`。"
+    ]
+  },
+  {
+    "skill_path": "skills\\serial-monitor\\SKILL.md",
+    "rule": "显式输入 > 工作区线索 > 历史上下文 > 默认值",
+    "snippet_lines": [
+      "## 自动探测",
+      "- 统一优先级：`显式输入 > 工作区线索 > 历史上下文 > 默认值`。"
+    ]
+  },
+  {
+    "skill_path": "skills\\static-analysis\\SKILL.md",
+    "rule": "ambiguous-context",
+    "snippet_lines": [
+      "## 自动探测",
+      "- 若多个候选同样合理且选择错误会破坏流程，标记为 `ambiguous-context` 并停止猜测。"
+    ]
+  },
+  {
+    "skill_path": "skills\\static-analysis\\SKILL.md",
+    "rule": "显式输入 > 工作区线索 > 历史上下文 > 默认值",
+    "snippet_lines": [
+      "## 自动探测",
+      "- 统一优先级：`显式输入 > 工作区线索 > 历史上下文 > 默认值`。"
+    ]
+  }
+]

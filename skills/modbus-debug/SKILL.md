@@ -48,9 +48,8 @@ description: 当需要调试 Modbus RTU（串口）或 Modbus TCP（网络）设
 ## 失败分流
 
 - `connection-failure`：串口无法打开、网络不通。
-- `slave-no-response`：从站地址无响应。
-- `illegal-function`：设备不支持该功能码。
-- `illegal-address`：寄存器地址越界。
+- `target-response-abnormal`：从站地址无响应、返回异常码（如非法功能码、非法地址）或响应报文校验失败。
+- `project-config-error`：串口参数、从站地址、寄存器区间或 TCP 端口配置错误。
 
 ## 输出约定
 
@@ -71,3 +70,14 @@ description: 当需要调试 Modbus RTU（串口）或 Modbus TCP（网络）设
 
 - 从 `build-keil` / `build-platformio` 烧录固件后，用此 skill 验证 Modbus 通信。
 - 与 `serial-monitor` 互补：serial-monitor 查看串口原始输出，modbus-debug 进行协议级调试。
+
+## 自动探测
+
+- 统一优先级：显式输入 > 工作区线索 > 历史上下文 > 默认值。
+- 若多个候选同样合理且选择错误会破坏流程，标记为 ambiguous-context 并停止猜测。
+
+## 平台说明
+
+- RTU 模式在 Windows 下通常使用 `COMx`，在 Linux 下通常使用 `/dev/ttyUSBx` 或 `/dev/ttyACMx`。
+- Linux 下若串口权限不足，应先处理设备权限后再重试，避免误判为 `connection-failure`。
+- TCP 模式跨平台行为基本一致，但建议显式指定超时参数，避免长时间阻塞。

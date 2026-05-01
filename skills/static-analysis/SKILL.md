@@ -24,6 +24,8 @@ description: 当需要对嵌入式 C/C++ 代码运行 cppcheck、clang-tidy 或 
 - `--detect` 模式检测 cppcheck、clang-tidy 和 arm-none-eabi-gcc 的可用性和版本。
 - GCC `-fanalyzer` 需要 GCC 12+，脚本会检查版本号。
 - 自动搜索工作区中的 `compile_commands.json`。
+- 统一优先级：显式输入 > 工作区线索 > 历史上下文 > 默认值。
+- 若多个候选同样合理且选择错误会破坏流程，标记为 ambiguous-context 并停止猜测。
 
 ## 执行步骤
 
@@ -41,6 +43,8 @@ description: 当需要对嵌入式 C/C++ 代码运行 cppcheck、clang-tidy 或 
 - 当指定的源码目录不存在时，返回 `artifact-missing`。
 - 当 `compile_commands.json` 指定但无效时，返回 `project-config-error`。
 - 当分析工具运行异常退出时，返回 `target-response-abnormal`。
+- 失败时至少提供：分析输入、关键判定依据、关键报错日志和导致结论不成立的证据。
+- 可恢复失败优先建议：补齐缺失输入后重试 1 次；若上下文仍不确定，返回 `ambiguous-context`。
 
 ## 平台说明
 
@@ -59,3 +63,5 @@ description: 当需要对嵌入式 C/C++ 代码运行 cppcheck、clang-tidy 或 
 
 - 当发现严重缺陷需要修复后重新构建时，交给对应的 `build-*` skill。
 - 当需要了解代码内存影响时，交给 `memory-analysis`。
+- 不交接直接结束：仅需输出分析/实现建议且不触发执行链路时，结束当前 skill。
+
